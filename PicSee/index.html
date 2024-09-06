@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <nav>
+        <ul>
+            <li><a href="index.html"><span class="icon">PicSee</span></a></li>
+            <li>Contact Us</li>
+            <li>Log-In</li>
+            <li>Sign-Up</li>
+        </ul>
+    </nav>
+    <div class="main">
+        <div class="search">
+            <input type="text" name="imgname" placeholder="search images" class="imgname">
+            <img src="search.svg" alt="search" id="search">
+        </div>
+        <div class="images">
+            <!-- <div class="img">
+                <img src="kids.png" alt="" id="img1">
+                <div class="icons">
+                    <img src="copy.svg" alt="download" class="copy" id="copy1">
+                </div>
+            </div> -->
+        </div>
+    </div>
+    <script>
+        let searchbtn = document.querySelector("#search");
+        let imagesContainer = document.querySelector(".images");
+        let imgaeLinks = [];
+        const ascesskey = "AXJ-ljgm0FXPHk9ZgxXPDWyXcvkDimCpQ138xvFNvJw";
+        const url = `https://api.unsplash.com/search/photos?client_id=${ascesskey}&`;
+        let query = "";
+        let page = 1;
+
+        searchbtn.addEventListener('click', async () => {
+            let search = document.querySelector(".imgname");
+            console.log(search.value);
+            query = search.value;
+            let searchurl = url + `page=${page}&query=${query}`;
+            console.log(searchurl)
+            await fetch(searchurl)
+                .then(async (data) => {
+                    const res = await data.json();
+                    UpdateImages(res.results);
+                }).catch((err) => {
+                    console.log(err);
+                });
+        });
+
+        function UpdateImages(results) {
+            imagesContainer.innerHTML = "";
+            console.log(results);
+
+            for (let i = 0; i < results.length; i++) {
+                const imageurl = results[i].urls.small;
+                imagesContainer.innerHTML += `
+            <div class="img" id="i${i + 1}">
+                <img src="${imageurl}" alt="pic.svg" id="img${i + 1}">
+                <div class="icons">
+                    <img src="copy.svg" alt="copy" class="copy" id="copy${i + 1}">
+                </div>
+            </div>`;
+
+                // Attach event listener to the new copy button
+              
+                let copyBtn = document.querySelector(`#copy${i + 1}`);
+                copyBtn.addEventListener("click", () => {
+                    const textArea = document.createElement("textarea");
+                    textArea.value = 'hello'; // This can be any text you want to copy
+                    document.body.appendChild(textArea);
+                    console.log(textArea.value);
+                    textArea.select();
+
+                    try {
+                        document.execCommand('copy');
+                        console.log("Content copied to clipboard");
+                    } catch (err) {
+                        console.error("Failed to copy: ", err);
+                    } finally {
+                        document.body.removeChild(textArea);
+                    }
+                });
+            }
+        }
+        let copyBtn = document.querySelector(`#copy1`);
+        copyBtn.addEventListener("click", () => {
+            const textArea = document.createElement("textarea");
+            textArea.value = 'hello'; // This can be any text you want to copy
+            document.body.appendChild(textArea);
+            console.log(textArea.value);
+            textArea.select();
+
+            try {
+                document.execCommand('copy');
+                console.log("Content copied to clipboard");
+            } catch (err) {
+                console.error("Failed to copy: ", err);
+            } finally {
+                document.body.removeChild(textArea);
+            }
+        });
+
+
+
+    </script>
+</body>
+
+</html>
